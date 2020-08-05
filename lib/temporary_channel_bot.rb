@@ -1,14 +1,86 @@
 # frozen_string_literal: true
 
 require 'discordrb'
+require_relative 'temporary_channel'
 
 class TemporaryChannelBot
   def initialize
     @token = ENV['TEMPORARY_CHANNEL_BOT_TOKEN']
     @bot = Discordrb::Bot.new token: (@token || '')
+    @channels = {}
+  end
+
+  def give_channel(channel, user, topic)
+    @channels[channel.id] = TemporaryChannel.new(channel.id, user, topic)
+    channel.topic = @channels[channel.id].topic
+  end
+
+  def take_channel(channel)
+    @channels[channel.id] = @channels[channel.id].leave
+    channel.topic = @channels[channel.id].topic
+  end
+
+  def busy_channel?(channel)
+    @channels[channel.id] && @channels[channel.id].busy?
+  end
+
+  def give_channel_command(message)
+    return "先生は鍵じゃありません！\n`せんせー鍵 用途` こう言いましょう。" unless message.content.match?(/せんせー鍵 \S+?/)
+
+    channel = message.channel
+    topic = message.content.split[1]
+
+    return "#{@channels[channel.id].user.username} さんが鍵を持っています。" if busy_channel?(channel)
+
+    give_channel(channel, message.author, topic)
+    'はい、大切に使ってくださいね。'
+  end
+
+  def take_channel_command(message)
+    channel = @channels[message.channel.id]
+    user = message.user
+
+    return '面白い冗談ですね。' unless channel.busy? && channel.user.id == user.id
+
+    take_channel(message.channel)
+    'どうも'
+  end
+
+  def who_has_channel_command(message)
+    channel = @channels[message.channel.id]
+    if channel && channel.busy?
+      "#{channel.user.mention} さんが鍵を持っています。"
+    else
+      'この教室は空いてますよ。'
+    end
+  end
+
+  def set_give_channel_command
+    @bot.message(start_with: 'せんせー鍵') do |event|
+      message = give_channel_command(event.message)
+      event.send_message(message)
+    end
+  end
+
+  def set_take_channel_command
+    @bot.message(content: 'せんせー返す') do |event|
+      message = take_channel_command(event.message)
+      event.send_message(message)
+    end
+  end
+
+  def set_who_has_channel_command
+    @bot.message(content: 'せんせー誰') do |event|
+      message = who_has_channel_command(event.message)
+      event.send_message(message)
+    end
   end
 
   def run
+    set_give_channel_command
+    set_take_channel_command
+    set_who_has_channel_command
+
     if @token.nil?
       puts 'Set the Discord bot token on TEMPORARY_CHANNEL_BOT_TOKEN'
     else
