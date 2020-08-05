@@ -25,7 +25,7 @@ class TemporaryChannelBot
   end
 
   def give_channel_command(message)
-    return "先生は鍵じゃありません！\n`せんせー鍵 用途` こう言いましょう。" unless message.content.match?(/せんせー鍵 \S+?/)
+    return "先生は鍵じゃありません！\n`せんせー鍵 用途` こう言いましょう。" unless message.content.match?(/せんせー鍵[ 　]\S+?/)
 
     channel = message.channel
     topic = message.content.split[1]
