@@ -49,7 +49,7 @@ class TemporaryChannelBot
     if channel && channel.busy?
       "#{channel.user.mention} さんが鍵を持っています。"
     else
-      'この教室は空いてますよ。'
+      '先生が持ってますよ。使いたかったら言ってくださいね。'
     end
   end
 
@@ -77,7 +77,7 @@ class TemporaryChannelBot
   end
 
   def set_who_has_key_command
-    @bot.message(content: 'せんせー誰') do |event|
+    @bot.message(content: 'せんせー鍵どこ') do |event|
       message = who_has_key_command(event.message)
       event.send_message(message)
     end
