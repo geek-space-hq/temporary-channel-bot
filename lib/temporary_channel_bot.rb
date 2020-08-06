@@ -53,6 +53,15 @@ class TemporaryChannelBot
     end
   end
 
+  def whats_topic_command(message)
+    channel = @channels[message.channel.id]
+    if channel && channel.busy?
+      "#{channel.topic}について話し合う場所です。"
+    else
+      'ここは空き教室です。先生に言ってくれたら使ってもいいですよ。'
+    end
+  end
+
   def set_give_channel_command
     @bot.message(start_with: 'せんせー鍵') do |event|
       message = give_channel_command(event.message)
@@ -74,10 +83,18 @@ class TemporaryChannelBot
     end
   end
 
+  def set_whats_topic_command
+    @bot.message(content: 'せんせーこれ何') do |event|
+      message = whats_topic_command(event.message)
+      event.send_message(message)
+    end
+  end
+
   def run
     set_give_channel_command
     set_take_channel_command
     set_who_has_channel_command
+    set_whats_topic_command
 
     if @token.nil?
       puts 'Set the Discord bot token on TEMPORARY_CHANNEL_BOT_TOKEN'
