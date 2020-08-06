@@ -47,7 +47,7 @@ class TemporaryChannelBot
   def who_has_key_command(message)
     channel = @channels[message.channel.id]
     if channel && channel.busy?
-      "#{channel.user.mention} さんが鍵を持っています。"
+      "#{channel.user.username} さんが鍵を持っています。"
     else
       '先生が持ってますよ。使いたかったら言ってくださいね。'
     end
