@@ -90,11 +90,15 @@ class TemporaryChannelBot
     end
   end
 
-  def run
+  def prepare
     set_give_channel_command
     set_take_channel_command
     set_who_has_channel_command
     set_whats_topic_command
+  end
+
+  def run
+    prepare
 
     if @token.nil?
       puts 'Set the Discord bot token on TEMPORARY_CHANNEL_BOT_TOKEN'
