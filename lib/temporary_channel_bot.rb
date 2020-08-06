@@ -12,12 +12,10 @@ class TemporaryChannelBot
 
   def give_channel(channel, user, topic)
     @channels[channel.id] = TemporaryChannel.new(channel.id, user, topic)
-    channel.topic = @channels[channel.id].topic
   end
 
   def take_channel(channel)
     @channels[channel.id] = @channels[channel.id].leave
-    channel.topic = @channels[channel.id].topic
   end
 
   def busy_channel?(channel)
@@ -33,7 +31,7 @@ class TemporaryChannelBot
     return "#{@channels[channel.id].user.username} さんが鍵を持っています。" if busy_channel?(channel)
 
     give_channel(channel, message.author, topic)
-    'はい、大切に使ってくださいね。'
+    "#{message.author.mention}さん、話題を#{topic}にしましたよ。大切に使ってくださいね。"
   end
 
   def take_channel_command(message)
@@ -43,7 +41,7 @@ class TemporaryChannelBot
     return '面白い冗談ですね。' unless channel.busy? && channel.user.id == user.id
 
     take_channel(message.channel)
-    'どうも'
+    "#{message.author.mention}さん、わざわざどうも。"
   end
 
   def who_has_channel_command(message)
