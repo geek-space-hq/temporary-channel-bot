@@ -12,7 +12,9 @@ I call a right to change a topic 'key'. / 私はトピックの変更権を鍵�
 |  ------  |  --  |
 | `せんせー鍵 "用途"` | The bot gives the channel key. / チャンネルの鍵を与えます。 |
 | `せんせー返す` | The bot takes the channel key. / チャンネルの鍵を取ります。 |
-| `せんせー誰` | Send who has the key. / チャンネルの鍵の所有者を送信します。 |
+| `せんせー鍵どこ` | Send who has the key. / チャンネルの鍵の所有者を送信します。 |
+| `せんせーこれ何` | Send the topic. / チャンネルの話題を送信します。 |
+| `せんせー教えて` | Send this bot's commands. / このBotのコマンドを送信します。 |
 
 ## Setup
 
