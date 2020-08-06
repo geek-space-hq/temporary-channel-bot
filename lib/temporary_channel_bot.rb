@@ -38,7 +38,7 @@ class TemporaryChannelBot
     channel = @channels[message.channel.id]
     user = message.user
 
-    return '面白い冗談ですね。' unless channel.busy? && channel.user.id == user.id
+    return 'ふふふ、面白い冗談ですね。' unless channel.busy? && channel.user.id == user.id
 
     take_channel(message.channel)
     "#{message.author.mention}さん、わざわざどうも。"
