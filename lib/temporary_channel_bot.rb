@@ -62,6 +62,18 @@ class TemporaryChannelBot
     end
   end
 
+  def teach_command
+    <<~Commands
+      ```rb
+      'せんせー鍵 用途': 先生があなたに鍵を渡します。
+      'せんせー返す'   : 鍵を返してもらいます。
+      'せんせー鍵どこ' : 鍵を誰が持っているか教えます。
+      'せんせーこれ何' : 教室の話題を教えます。
+      'せんせー教えて' : このBotのコマンドについて教えます。
+      ```
+    Commands
+  end
+
   def set_give_channel_command
     @bot.message(start_with: 'せんせー鍵') do |event|
       message = give_channel_command(event.message)
@@ -90,11 +102,18 @@ class TemporaryChannelBot
     end
   end
 
+  def set_teach_command
+    @bot.message(content: 'せんせー教えて') do |event|
+      event.send_message(teach_command)
+    end
+  end
+
   def prepare
     set_give_channel_command
     set_take_channel_command
     set_who_has_key_command
     set_whats_topic_command
+    set_teach_command
   end
 
   def run
