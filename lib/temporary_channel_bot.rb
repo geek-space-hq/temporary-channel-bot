@@ -44,7 +44,7 @@ class TemporaryChannelBot
     "#{message.author.mention}さん、わざわざどうも。"
   end
 
-  def who_has_channel_command(message)
+  def who_has_key_command(message)
     channel = @channels[message.channel.id]
     if channel && channel.busy?
       "#{channel.user.mention} さんが鍵を持っています。"
@@ -76,9 +76,9 @@ class TemporaryChannelBot
     end
   end
 
-  def set_who_has_channel_command
+  def set_who_has_key_command
     @bot.message(content: 'せんせー誰') do |event|
-      message = who_has_channel_command(event.message)
+      message = who_has_key_command(event.message)
       event.send_message(message)
     end
   end
@@ -93,7 +93,7 @@ class TemporaryChannelBot
   def prepare
     set_give_channel_command
     set_take_channel_command
-    set_who_has_channel_command
+    set_who_has_key_command
     set_whats_topic_command
   end
 
