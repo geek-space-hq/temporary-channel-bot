@@ -46,7 +46,8 @@ bot = TopicManager.new token: ENV['BOT_TOKEN']
 bot.redis = Redis.new(url: ENV['REDIS_URL'])
 bot.message do |event|
   channel = event.channel
-  reply_to = event.content.match?(/\?set .+/) ? event.server.general_channel : channel
+  normal_chat = bot.channel(406357894427312151)
+  reply_to = event.content.match?(/\?set .+/) ? normal_chat : channel
   reply_to.send case event.content
                 when /\?set .+/
                   topic = event.content.delete_prefix('?set ')
