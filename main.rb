@@ -19,6 +19,11 @@ bot.message(contains: /\?set .+/) do |event|
   event.server.general_channel.send_message("#{event.channel.name} では #{topic} について話しています")
 end
 
+bot.message(content: '?reset') do |event|
+  redis.del(event.channel.id.to_s)
+  event.respond('話題を消し去りました')
+end
+
 bot.message(content: '?what') do |event|
   topic = redis.get(event.channel.id.to_s)
 
