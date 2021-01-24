@@ -12,7 +12,7 @@ class TopicManager < Discordrb::Bot
 
   def set_topic(channel, topic)
     @redis.set(channel.id.to_s, topic)
-    "#{channel.name} では #{topic} について話しています"
+    "#{channel.mention} では #{topic} について話しています"
   end
 
   def reset_topic(channel)
@@ -46,15 +46,16 @@ bot = TopicManager.new token: ENV['BOT_TOKEN']
 bot.redis = Redis.new(url: ENV['REDIS_URL'])
 bot.message do |event|
   channel = event.channel
-  normal_chat = bot.channel(406357894427312151)
-  reply_to = event.content.match?(/\?set .+/) ? normal_chat : channel
-  reply_to.send case event.content
-                when /\?set .+/
-                  topic = event.content.delete_prefix('?set ')
-                  bot.set_topic(channel, topic)
-                when '?reset' then bot.reset_topic(channel)
-                when '?index' then bot.show_topics
-                when '?what' then bot.show_current_topic(channel)
-                end
+  case event.content
+  when '?reset' then channel.send bot.reset_topic(channel)
+  when '?index' then channel.send bot.show_topics
+  when '?what' then channel.send bot.show_current_topic(channel)
+  when /\?set .+/
+    topic = event.content.delete_prefix('?set ')
+    message = bot.set_topic(channel, topic)
+
+    bot.channel(406357894427312151).send message # normal-chat
+    bot.channel(723801575214022688).send message # teacher-room
+  end
 end
 bot.run
