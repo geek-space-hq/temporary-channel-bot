@@ -24,6 +24,17 @@ bot.message(content: '?reset') do |event|
   event.respond('話題を消し去りました')
 end
 
+bot.message(content: '?index') do |event|
+  topics = redis.keys('*').map do
+    channel = bot.channel(_1.to_i)
+    topic = redis.get(_1)
+
+    "#{channel.name}: #{topic}" if channel
+  end.compact
+
+  event.respond("```\n" + topics.join("\n") + "\n```")
+end
+
 bot.message(content: '?what') do |event|
   topic = redis.get(event.channel.id.to_s)
 
