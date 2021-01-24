@@ -7,44 +7,53 @@ require 'redis'
 
 Dotenv.load
 
-redis = Redis.new(url: ENV['REDIS_URL'])
+class TopicManager < Discordrb::Bot
+  attr_writer :redis
 
-bot = Discordrb::Bot.new token: ENV['TEACHER_TOKEN']
+  def set_topic(channel, topic)
+    @redis.set(channel.id.to_s, topic)
+    "#{channel.name} では #{topic} について話しています"
+  end
 
-bot.message(contains: /\?set .+/) do |event|
-  topic = event.content.delete_prefix('?set ')
+  def reset_topic(channel)
+    @redis.del(channel.id.to_s)
+    '話題を消し去りました'
+  end
 
-  redis.set(event.channel.id.to_s, topic)
+  def show_current_topic(channel)
+    topic = @redis.get(channel.id.to_s)
 
-  event.server.general_channel.send_message("#{event.channel.name} では #{topic} について話しています")
+    if topic
+      "#{topic} について話しています"
+    else
+      '話題なし'
+    end
+  end
+
+  def show_topics
+    topics = @redis.keys('*').map do
+      channel = channel(_1.to_i)
+      topic = @redis.get(_1)
+
+      "#{channel.mention} のトピックは #{topic} です" if channel
+    end.compact
+
+    topics.join("\n")
+  end
 end
 
-bot.message(content: '?reset') do |event|
-  redis.del(event.channel.id.to_s)
-  event.respond('話題を消し去りました')
+bot = TopicManager.new token: ENV['BOT_TOKEN']
+bot.redis = Redis.new(url: ENV['REDIS_URL'])
+bot.message do |event|
+  channel = event.channel
+  reply_to = event.content.match?(/\?set .+/) ? event.server.general_channel : channel
+  reply_to.send case event.content
+                when /\?set .+/
+                  topic = event.content.delete_prefix('?set ')
+                  bot.set_topic(channel, topic)
+                when '?reset' then bot.reset_topic(channel)
+                when '?index' then bot.show_topics
+                when '?what' then bot.show_current_topic(channel)
+                end
 end
-
-bot.message(content: '?index') do |event|
-  topics = redis.keys('*').map do
-    channel = bot.channel(_1.to_i)
-    topic = redis.get(_1)
-
-    "#{channel.name}: #{topic}" if channel
-  end.compact
-
-  event.respond("```\n" + topics.join("\n") + "\n```")
-end
-
-bot.message(content: '?what') do |event|
-  topic = redis.get(event.channel.id.to_s)
-
-  message = if topic
-              "#{topic} について話しています"
-            else
-              '話題なし'
-            end
-
-  event.respond(message)
-end
-
 bot.run
