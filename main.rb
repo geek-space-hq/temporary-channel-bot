@@ -49,7 +49,7 @@ bot.message do |event|
   case event.content
   when '?reset' then channel.send bot.reset_topic(channel)
   when '?index' then channel.send bot.show_topics
-  when '?what' then channel.send bot.show_current_topic(channel)
+  when '?topic' then channel.send bot.show_current_topic(channel)
   when /\?set .+/
     topic = event.content.delete_prefix('?set ')
     message = bot.set_topic(channel, topic)
