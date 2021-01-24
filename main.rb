@@ -19,4 +19,16 @@ bot.message(contains: /\?set .+/) do |event|
   event.server.general_channel.send_message("#{event.channel.name} では #{topic} について話しています")
 end
 
+bot.message(content: '?what') do |event|
+  topic = redis.get(event.channel.id.to_s)
+
+  message = if topic
+              "#{topic} について話しています"
+            else
+              '話題なし'
+            end
+
+  event.respond(message)
+end
+
 bot.run
