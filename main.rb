@@ -10,7 +10,14 @@ Dotenv.load
 class TopicManager < Discordrb::Bot
   attr_writer :redis
 
+  def register_channel(channel)
+    @redis.set(channel.id.to_s, 'none')
+    "#{channel.name} を登録したよ"
+  end
+
   def set_topic(channel, topic)
+    return 'は？' unless @redis.get(channel.id.to_s)
+
     @redis.set(channel.id.to_s, topic)
     "#{channel.mention} では #{topic} について話しています"
   end
@@ -47,6 +54,7 @@ bot.redis = Redis.new(url: ENV['REDIS_URL'])
 bot.message do |event|
   channel = event.channel
   case event.content
+  when '?register' then channel.send bot.register_channel(channel)
   when '?reset' then channel.send bot.reset_topic(channel)
   when '?index' then channel.send bot.show_topics
   when '?topic' then channel.send bot.show_current_topic(channel)
@@ -54,8 +62,9 @@ bot.message do |event|
     topic = event.content.delete_prefix('?set ')
     message = bot.set_topic(channel, topic)
 
-    bot.channel(406357894427312151).send message # normal-chat
-    bot.channel(723801575214022688).send message # teacher-room
+    event.respond message
+    bot.channel(406357894427312151).send message unless message == 'は？' # normal-chat
+    bot.channel(723801575214022688).send message unless message == 'は？' # teacher-room
   end
 end
 bot.run
