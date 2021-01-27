@@ -64,7 +64,7 @@ bot.message do |event|
 
     event.respond message
     bot.channel(406357894427312151).send message unless message == 'は？' # normal-chat
-    bot.channel(723801575214022688).send message unless message == 'は？' # teacher-room
+    bot.channel(723801575214022688).send bot.show_topics unless message == 'は？' # teacher-room
   end
 end
 bot.run
