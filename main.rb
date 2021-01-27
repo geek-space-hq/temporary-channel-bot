@@ -8,7 +8,7 @@ require 'redis'
 Dotenv.load
 
 normal_chat = ENV['NORMAL_CHAT'].to_i
-guide_room = ENV['GUIDE _ROOM'].to_i
+guide_room = ENV['GUIDE_ROOM'].to_i
 
 class TopicManager < Discordrb::Bot
   attr_writer :redis
@@ -16,6 +16,14 @@ class TopicManager < Discordrb::Bot
   def register_channel(channel)
     @redis.set(channel.id.to_s, 'none')
     "#{channel.name} を登録したよ"
+  end
+
+  def alloc_topic(topic)
+    channel = all_channels.filter { _2 == 'none'}[0]
+
+    return '空きチャンネルがないんよ' unless channel
+
+    set_topic(channel[0], topic)
   end
 
   def set_topic(channel, topic)
@@ -26,8 +34,6 @@ class TopicManager < Discordrb::Bot
   end
 
   def reset_topic(channel)
-    return 'は？' unless @redis.get(channel.id.to_s)
-
     @redis.set(channel.id.to_s, 'none')
     '話題を消し去りました'
   end
@@ -43,14 +49,13 @@ class TopicManager < Discordrb::Bot
   end
 
   def show_topics
-    topics = @redis.keys('*').map do
-      channel = channel(_1.to_i)
-      topic = @redis.get(_1)
-
-      "#{channel.mention} のトピックは #{topic} です" if channel
-    end.compact
+    topics = all_channels.map { "#{_1.mention} のトピックは #{_2} です" }
 
     topics.join("\n")
+  end
+
+  def all_channels
+    @redis.keys('*').map { [channel(_1.to_i), @redis.get(_1)] }
   end
 end
 
@@ -63,13 +68,19 @@ bot.message do |event|
   when '?reset' then channel.send bot.reset_topic(channel)
   when '?index' then channel.send bot.show_topics
   when '?topic' then channel.send bot.show_current_topic(channel)
-  when /\?set .+/
-    topic = event.content.delete_prefix('?set ')
-    message = bot.set_topic(channel, topic)
+  when /\?(alloc|set) .+/
+    command = event.content.split[0]
+    topic = event.content.delete_prefix(command + ' ')
+    message = if command == '?alloc'
+                bot.alloc_topic(topic)
+              else
+                bot.set_topic(channel, topic)
+              end
 
     event.respond message
-    bot.channel(normal_chat).send message unless message == 'は？' # normal-chat
-    bot.channel(guide_room).send bot.show_topics unless message == 'は？' # teacher-room
+    bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
+    bot.channel(guide_room).send bot.show_topics unless message == '空きチャンネルがないんよ'
   end
 end
+
 bot.run
