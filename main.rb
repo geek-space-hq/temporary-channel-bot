@@ -65,7 +65,7 @@ bot.message do |event|
   channel = event.channel
   case event.content
   when '?register' then channel.send bot.register_channel(channel)
-  when '?reset' then channel.send bot.reset_topic(channel)
+  when '?unset' then channel.send bot.reset_topic(channel)
   when '?index' then channel.send bot.show_topics
   when '?topic' then channel.send bot.show_current_topic(channel)
   when /\?(alloc|set) .+/
