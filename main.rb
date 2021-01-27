@@ -8,7 +8,7 @@ require 'redis'
 Dotenv.load
 
 normal_chat = ENV['NORMAL_CHAT'].to_i
-guide_room = ENV['GUIDE_ROOM'].to_i
+guide_room = ENV['GUIDE _ROOM'].to_i
 
 class TopicManager < Discordrb::Bot
   attr_writer :redis
@@ -26,7 +26,9 @@ class TopicManager < Discordrb::Bot
   end
 
   def reset_topic(channel)
-    @redis.del(channel.id.to_s)
+    return 'は？' unless @redis.get(channel.id.to_s)
+
+    @redis.set(channel.id.to_s, 'none')
     '話題を消し去りました'
   end
 
