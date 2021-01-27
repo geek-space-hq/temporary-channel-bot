@@ -7,6 +7,9 @@ require 'redis'
 
 Dotenv.load
 
+normal_chat = ENV['NORMAL_CHAT'].to_i
+guide_room = ENV['GUIDE_ROOM'].to_i
+
 class TopicManager < Discordrb::Bot
   attr_writer :redis
 
@@ -63,8 +66,8 @@ bot.message do |event|
     message = bot.set_topic(channel, topic)
 
     event.respond message
-    bot.channel(406357894427312151).send message unless message == 'は？' # normal-chat
-    bot.channel(723801575214022688).send bot.show_topics unless message == 'は？' # teacher-room
+    bot.channel(normal_chat).send message unless message == 'は？' # normal-chat
+    bot.channel(guide_room).send bot.show_topics unless message == 'は？' # teacher-room
   end
 end
 bot.run
