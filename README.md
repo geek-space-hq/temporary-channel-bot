@@ -4,22 +4,23 @@
 
 ## Setup
 
-Clone this repository. / このリポジトリーを複製する。
+このリポジトリーを複製する
 ```
 $ git clone https://github.com/geek-space-hq/temporary-chat-bot
 ```
 
-Install gems. / gemをインストールする。
+gemをインストールする
 ```
 $ bundle install
 ```
 
-Set your Discord token / あなたのディスコードトークンを設定する。
+.envファイルに環境設定を書き込む
+.env.sampleを要参照　
 ```
-$ export TEMPORARY_CHANNEL_BOT_TOKEN='your token'
+$ touch .env
 ```
 
-Run / 実行する。
+実行する
 ```
 $ ruby main.rb
 ```
