@@ -8,6 +8,9 @@ git_source(:github) {|repo_name| 'https://github.com/#{repo_name}' }
 
 gem 'discordrb'
 gem 'dotenv'
+gem 'rbnacl'
 gem 'redis'
+gem 'rest-client'
 gem 'rspec'
 gem 'rubocop'
+gem 'sinatra'
