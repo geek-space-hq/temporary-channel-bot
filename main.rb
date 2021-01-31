@@ -19,6 +19,7 @@ bot.redis = Redis.new(url: redis_url)
 
 commands = [
   SlashCommands::Command.new('register', 'このチャンネルを我が支配下にする'),
+  SlashCommands::Command.new('unregister', 'このチャンネルを管理下から外す'),
   SlashCommands::Command.new('unset', 'このチャンネルの話題を消し去る'),
   SlashCommands::Command.new('index', '各チャンネルの話題を表示する'),
   SlashCommands::Command.new('topic', 'このチャンネルの話題を表示する'),
@@ -32,6 +33,7 @@ reciever = SlashCommands::Reciever.new(token, key)
 reciever.on_recieve do |event|
   case event.command
   when 'register' then bot.register_channel(event.channel)
+  when 'unregister' then bot.unregister_channel(event.channel)
   when 'unset' then bot.reset_topic(event.channel)
   when 'topic' then bot.show_current_topic(event.channel)
   when 'index' then bot.show_topics

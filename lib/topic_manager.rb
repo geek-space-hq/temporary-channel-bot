@@ -11,6 +11,11 @@ class TopicManager < Discordrb::Bot
     "#{channel.name} を登録したよ"
   end
 
+  def unregister_channel(channel)
+    @redis.del(channel.id.to_s)
+    "#{channel.name} は話題を設定できなくなったよ"
+  end
+
   def alloc_topic(topic)
     channel = all_channels.filter { _2 == 'none'}[0]
 
