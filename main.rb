@@ -31,10 +31,10 @@ commands.each { _1.register token }
 reciever = SlashCommands::Reciever.new(token, key)
 reciever.on_recieve do |event|
   case event.command
-  when 'register' then event.channel.send bot.register_channel(event.channel)
-  when 'unset' then event.channel.send bot.reset_topic(event.channel)
-  when 'topic' then event.channel.send bot.show_current_topic(event.channel)
-  when 'index' then event.channel.send_embed { _1.description = bot.show_topics }
+  when 'register' then bot.register_channel(event.channel)
+  when 'unset' then bot.reset_topic(event.channel)
+  when 'topic' then bot.show_current_topic(event.channel)
+  when 'index' then bot.show_topics
   when /(alloc|set)/
     topic = event.arguments['話題']
     message = if event.command == 'alloc'
@@ -43,9 +43,9 @@ reciever.on_recieve do |event|
                 bot.set_topic(event.channel, topic)
               end
 
-    event.channel.send message
     bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
     bot.channel(guide_room).send_embed { _1.description = bot.show_topics } unless message == '空きチャンネルがないんよ'
+    message
   end
 end
 

@@ -49,7 +49,19 @@ module SlashCommands
         channel = client.channel(content['channel_id'])
         user = client.user(content['member']['user']['id'])
 
-        to_do.call Event.new(command, arguments, channel, user)
+        response = to_do.call Event.new(command, arguments, channel, user)
+
+        response = [response] unless response.class == Array
+
+        return {
+          type: 4,
+          data: {
+            'tts': false,
+            content: response[0],
+            embeds: response[1..].map(&:to_hash),
+            allowed_mentions: []
+          }
+        }.to_json
       end
     end
 
