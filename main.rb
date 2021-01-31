@@ -28,24 +28,22 @@ commands = [
 
 commands.each { _1.register token }
 
-reciever = SlashCommands::Reciever.new(key)
-reciever.on_recieve do |content|
-  current_channel = bot.channel(content['channel_id'])
-
-  case content['data']['name']
-  when 'register' then current_channel.send bot.register_channel(current_channel)
-  when 'unset' then current_channel.send bot.reset_topic(current_channel)
-  when 'topic' then current_channel.send bot.show_current_topic(current_channel)
-  when 'index' then current_channel.send bot.show_topics
+reciever = SlashCommands::Reciever.new(token, key)
+reciever.on_recieve do |event|
+  case event.command
+  when 'register' then event.channel.send bot.register_channel(event.channel)
+  when 'unset' then event.channel.send bot.reset_topic(event.channel)
+  when 'topic' then event.channel.send bot.show_current_topic(event.channel)
+  when 'index' then event.channel.send bot.show_topics
   when /(alloc|set)/
-    topic = content['data']['options'][0]['value']
-    message = if content['data']['name'] == 'alloc'
+    topic = event.arguments['話題']
+    message = if event.command == 'alloc'
                 bot.alloc_topic(topic)
               else
-                bot.set_topic(current_channel, topic)
+                bot.set_topic(event.channel, topic)
               end
 
-    current_channel.send message
+    event.channel.send message
     bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
     bot.channel(guide_room).send bot.show_topics unless message == '空きチャンネルがないんよ'
   end

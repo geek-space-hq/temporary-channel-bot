@@ -2,13 +2,17 @@
 
 require 'sinatra'
 require 'rbnacl'
+require 'discordrb'
+require 'json'
+require_relative './event'
 
 module SlashCommands
   class Reciever
     include Sinatra
 
-    def initialize(key)
+    def initialize(token, key)
       @verify_key = RbNaCl::Signatures::Ed25519::VerifyKey.new convert_to_bytes(key)
+      @client = Discordrb::Bot.new token: token
     end
 
     def convert_to_bytes(signature)
@@ -23,6 +27,7 @@ module SlashCommands
 
     def on_recieve(&to_do)
       reciever = self
+      client = @client
 
       Base.post '/' do
         header = request.env.select { _1.start_with?('HTTP_') }
@@ -34,7 +39,17 @@ module SlashCommands
 
         return { type: '1' }.to_json if content['type'] == 1
 
-        to_do.call(content)
+        command = content['data']['name']
+        arguments = if content['data']['options']
+                      content['data']['options'].map { [_1['name'], _1['value']] }.to_h
+                    else
+                      {}
+                    end
+
+        channel = client.channel(content['channel_id'])
+        user = client.user(content['member']['user']['id'])
+
+        to_do.call Event.new(command, arguments, channel, user)
       end
     end
 
