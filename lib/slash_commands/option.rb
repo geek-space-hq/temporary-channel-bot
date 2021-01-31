@@ -14,7 +14,7 @@ module SlashCommands
     end
 
     def to_h
-      { type: @type, name: @name, description: @description, choices: @choices, options: @options }
+      { type: @type, name: @name, description: @description, required: @required, choices: @choices, options: @options }
     end
 
     def to_json(*)
