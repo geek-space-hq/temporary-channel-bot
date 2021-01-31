@@ -48,6 +48,6 @@ class TopicManager < Discordrb::Bot
   end
 
   def all_channels
-    @redis.keys('*').map { [channel(_1.to_i), @redis.get(_1)] }
+    @redis.keys('*').sort.map { [channel(_1.to_i), @redis.get(_1)] }
   end
 end
