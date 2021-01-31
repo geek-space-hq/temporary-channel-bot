@@ -34,7 +34,7 @@ reciever.on_recieve do |event|
   when 'register' then event.channel.send bot.register_channel(event.channel)
   when 'unset' then event.channel.send bot.reset_topic(event.channel)
   when 'topic' then event.channel.send bot.show_current_topic(event.channel)
-  when 'index' then event.channel.send bot.show_topics
+  when 'index' then event.channel.send_embed { _1.description = bot.show_topics }
   when /(alloc|set)/
     topic = event.arguments['話題']
     message = if event.command == 'alloc'
@@ -45,7 +45,7 @@ reciever.on_recieve do |event|
 
     event.channel.send message
     bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
-    bot.channel(guide_room).send bot.show_topics unless message == '空きチャンネルがないんよ'
+    bot.channel(guide_room).send_embed { _1.description = bot.show_topics } unless message == '空きチャンネルがないんよ'
   end
 end
 
