@@ -6,6 +6,8 @@ require 'rbnacl'
 
 module SlashCommands
   class Command
+    attr_reader :name, :description, :options
+
     def initialize(name, description, *options)
       @name = name
       @description = description
