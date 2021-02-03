@@ -47,7 +47,14 @@ class TopicManager < Discordrb::Bot
   end
 
   def show_topics
-    topics = all_channels.map { "#{_1.mention} のトピックは #{_2} です" }
+    topics = all_channels.map do
+      topic = if _2 == 'none'
+                'ない'
+              else _2
+              end
+
+      "#{_1.mention} のトピックは #{topic} です"
+    end
 
     topics.join("\n")
   end
