@@ -20,8 +20,8 @@ bot.redis = Redis.new(url: redis_url)
 commands = [
   SlashCommands::Command.new('register', 'このチャンネルを我が支配下にする'),
   SlashCommands::Command.new('unregister', 'このチャンネルを管理下から外す'),
-  SlashCommands::Command.new('alloc', '適当なチャンネルに話題を割り当てる', SlashCommands::Option.new(3, '話題', '話したいこと', true)),
-  SlashCommands::Command.new('set', 'このチャンネルに話題を割り当てる', SlashCommands::Option.new(3, '話題', '話したいこと', true)),
+  SlashCommands::Command.new('alloc', '適当なチャンネルに話題を割り当てる', SlashCommands::Option.new(3, 'topic', 'talk about...', true)),
+  SlashCommands::Command.new('set', 'このチャンネルに話題を割り当てる', SlashCommands::Option.new(3, 'topic', 'talk about...', true)),
   SlashCommands::Command.new('unset', 'このチャンネルの話題を消し去る'),
   SlashCommands::Command.new('index', '各チャンネルの話題を表示する'),
   SlashCommands::Command.new('topic', 'このチャンネルの話題を表示する')
