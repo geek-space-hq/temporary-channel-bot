@@ -45,8 +45,8 @@ reciever.on_recieve do |event|
                 bot.set_topic(event.channel, topic)
               end
 
-    bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
-    bot.channel(guide_room).send_embed { _1.description = bot.show_topics } unless message == '空きチャンネルがないんよ'
+    bot.channel(normal_chat).send message unless ['空きチャンネルがないんよ', 'は？'].include? message
+    bot.channel(guide_room).send_embed { _1.description = bot.show_topics } unless ['空きチャンネルがないんよ', 'は？'].include? message
     message
   end
 end
@@ -70,8 +70,8 @@ bot.message do |event|
               end
 
     event.respond message
-    bot.channel(normal_chat).send message unless message == '空きチャンネルがないんよ'
-    bot.channel(guide_room).send bot.show_topics unless message == '空きチャンネルがないんよ'
+    bot.channel(normal_chat).send message unless ['空きチャンネルがないんよ', 'は？'].include? message
+    bot.channel(guide_room).send bot.show_topics unless ['空きチャンネルがないんよ', 'は？'].include? message
   end
 end
 
