@@ -38,7 +38,7 @@ reciever.on_recieve do |event|
   when 'topic' then bot.show_current_topic(event.channel)
   when 'index' then bot.show_topics
   when /(alloc|set)/
-    topic = event.arguments['話題']
+    topic = event.arguments['topic']
     message = if event.command == 'alloc'
                 bot.alloc_topic(topic)
               else
