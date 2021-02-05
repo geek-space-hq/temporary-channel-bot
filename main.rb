@@ -11,11 +11,14 @@ Dotenv.load
 token = ENV['BOT_TOKEN']
 key = ENV['BOT_KEY']
 redis_url = ENV['REDIS_URL']
-normal_chat = ENV['NORMAL_CHAT'].to_i
-guide_room = ENV['GUIDE_ROOM'].to_i
+normal_id = ENV['NORMAL_CHAT'].to_i
+guide_id = ENV['GUIDE_ROOM'].to_i
 
 bot = TopicManager.new token: token
 bot.redis = Redis.new(url: redis_url)
+
+normal = bot.channel(normal_id)
+guild = bot.channel(guide_id)
 
 commands = [
   SlashCommands::Command.new('register', 'このチャンネルを我が支配下にする'),
@@ -40,13 +43,13 @@ reciever.on_recieve do |event|
   when /(alloc|set)/
     topic = event.arguments['topic']
     message = if event.command == 'alloc'
-                bot.alloc_topic(topic)
+                bot.alloc_topic(topic, guild)
               else
                 bot.set_topic(event.channel, topic)
               end
 
-    bot.channel(normal_chat).send message unless ['空きチャンネルがないんよ', 'は？'].include? message
-    bot.channel(guide_room).send_embed { _1.description = bot.show_topics } unless ['空きチャンネルがないんよ', 'は？'].include? message
+    normal.send message unless ['空きチャンネルがないんよ', 'は？'].include? message
+    guild.send_embed { _1.description = bot.show_topics } unless ['空きチャンネルがないんよ', 'は？'].include? message
     message
   end
 end
@@ -64,14 +67,14 @@ bot.message do |event|
     command = event.content.split[0]
     topic = event.content.delete_prefix(command + ' ')
     message = if command == '?alloc'
-                bot.alloc_topic(topic)
+                bot.alloc_topic(topic, guild)
               else
                 bot.set_topic(channel, topic)
               end
 
     event.respond message
-    bot.channel(normal_chat).send message unless ['空きチャンネルがないんよ', 'は？'].include? message
-    bot.channel(guide_room).send bot.show_topics unless ['空きチャンネルがないんよ', 'は？'].include? message
+    normal.send message unless ['空きチャンネルがないんよ', 'は？'].include? message
+    guild.send bot.show_topics unless ['空きチャンネルがないんよ', 'は？'].include? message
   end
 end
 

@@ -16,12 +16,17 @@ class TopicManager < Discordrb::Bot
     "#{channel.name} は話題を設定できなくなったよ"
   end
 
-  def alloc_topic(topic)
-    channel = all_channels.filter { _2 == 'none'}[0]
+  def alloc_topic(topic, guild_channel)
+    hungry_channels = all_channels.filter { _2 == 'none'}.map{ _1[0] }
 
-    return '空きチャンネルがないんよ' unless channel
+    target_channel = if hungry_channels.empty?
+                       new_one = create_channel(guild_channel)
+                       register_channel(new_one)
+                       new_one
+                     else hungry_channels[0]
+                     end
 
-    set_topic(channel[0], topic)
+    set_topic(target_channel, topic)
   end
 
   def set_topic(channel, topic)
@@ -44,6 +49,10 @@ class TopicManager < Discordrb::Bot
     else
       '話題なし'
     end
+  end
+
+  def create_channel(guild_channel)
+    guild_channel.server.create_channel('１ねんｎ組', topic: 'なかよくつかおうね', parent: guild_channel.parent_id)
   end
 
   def show_topics
