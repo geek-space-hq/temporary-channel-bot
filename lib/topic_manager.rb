@@ -39,6 +39,7 @@ class TopicManager < Discordrb::Bot
 
   def reset_topic(channel)
     @redis.set(channel.id.to_s, 'none')
+    channel.name = 'マサチューセッチュ❣️'
     '話題を消し去りました'
   end
 
@@ -53,7 +54,7 @@ class TopicManager < Discordrb::Bot
   end
 
   def create_channel(guild_channel)
-    guild_channel.server.create_channel('１ねんｎ組', topic: 'なかよくつかおうね', parent: guild_channel.parent_id)
+    guild_channel.server.create_channel('マサチューセッチュ❣️', topic: 'なかよくつかおうね', parent: guild_channel.parent_id)
   end
 
   def show_topics
