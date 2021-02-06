@@ -33,6 +33,7 @@ class TopicManager < Discordrb::Bot
     return 'は？' unless @redis.get(channel.id.to_s)
 
     @redis.set(channel.id.to_s, topic)
+    channel.name = topic
     "#{channel.mention} では #{topic} について話しています"
   end
 
